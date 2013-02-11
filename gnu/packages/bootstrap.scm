@@ -1,5 +1,6 @@
 ;;; GNU Guix --- Functional package management for GNU
 ;;; Copyright © 2012, 2013 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013 Nikita Karetnikov <nikita@karetnikov.org>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -134,6 +135,7 @@ check whether everything is alright."
   "Return the name of Glibc's dynamic linker for SYSTEM."
   (cond ((string=? system "x86_64-linux") "/lib/ld-linux-x86-64.so.2")
         ((string=? system "i686-linux") "/lib/ld-linux.so.2")
+        ((string=? system "mips64el-linux") "/lib/ld.so.1")
         (else (error "dynamic linker name not known for this system"
                      system))))
 
@@ -197,42 +199,50 @@ $out/bin/guile --version~%"
     "http://www.fdn.fr/~lcourtes/software/guix/packages"))
 
 (define %bootstrap-coreutils&co
-  (package-from-tarball "bootstrap-binaries"
-                        (lambda (system)
-                          (origin
-                           (method url-fetch)
-                           (uri (map (cut string-append <> "/" system
-                                          "/20130105/static-binaries.tar.xz")
-                                     %bootstrap-base-urls))
-                           (sha256
-                            (match system
-                              ("x86_64-linux"
-                               (base32
-                                "0md23alzy6nc5f16pric7mkagczdzr8xbh074sb3rjzrls06j1ls"))
-                              ("i686-linux"
-                               (base32
-                                "0nzj1lmm9b94g7k737cr4w1dv282w5nmhb53238ikax9r6pkc0yb"))))))
-                        "true"                    ; the program to test
-                        "Bootstrap binaries of Coreutils, Awk, etc."))
+  (package-from-tarball
+   "bootstrap-binaries"
+   (lambda (system)
+     (origin
+      (method url-fetch)
+      (uri (map (cut string-append <> "/" system
+                     "/20130105/static-binaries.tar.xz")
+                %bootstrap-base-urls))
+      (sha256
+       (match system
+              ("x86_64-linux"
+               (base32
+                "0md23alzy6nc5f16pric7mkagczdzr8xbh074sb3rjzrls06j1ls"))
+              ("i686-linux"
+               (base32
+                "0nzj1lmm9b94g7k737cr4w1dv282w5nmhb53238ikax9r6pkc0yb"))
+              ("mips64el-linux"
+               (base32
+                "0qfcz9ah4d7pwx273mznhkbcwqi393vcy1qvv80slv4m01barimb"))))))
+   "true"                    ; the program to test
+   "Bootstrap binaries of Coreutils, Awk, etc."))
 
 (define %bootstrap-binutils
-  (package-from-tarball "binutils-bootstrap"
-                        (lambda (system)
-                          (origin
-                           (method url-fetch)
-                           (uri (map (cut string-append <> "/" system
-                                          "/20130105/binutils-2.22.tar.xz")
-                                     %bootstrap-base-urls))
-                           (sha256
-                            (match system
-                              ("x86_64-linux"
-                               (base32
-                                "1ffmk2yy2pxvkqgzrkzp3s4jpn4qaaksyk3b5nsc5cjwfm7qkgzh"))
-                              ("i686-linux"
-                               (base32
-                                "1rafk6aq4sayvv3r3d2khn93nkyzf002xzh0xadlyci4mznr6b0a"))))))
-                        "ld"                      ; the program to test
-                        "Bootstrap binaries of the GNU Binutils"))
+  (package-from-tarball
+   "binutils-bootstrap"
+   (lambda (system)
+     (origin
+      (method url-fetch)
+      (uri (map (cut string-append <> "/" system
+                     "/20130105/binutils-2.22.tar.xz")
+                %bootstrap-base-urls))
+      (sha256
+       (match system
+              ("x86_64-linux"
+               (base32
+                "1ffmk2yy2pxvkqgzrkzp3s4jpn4qaaksyk3b5nsc5cjwfm7qkgzh"))
+              ("i686-linux"
+               (base32
+                "1rafk6aq4sayvv3r3d2khn93nkyzf002xzh0xadlyci4mznr6b0a"))
+              ("mips64el-linux"
+               (base32
+                "0216pszdfz6ark6zhaldmh7z2gzjyjbbycdb0km25aqrvgz63lia"))))))
+   "ld"                      ; the program to test
+   "Bootstrap binaries of the GNU Binutils"))
 
 (define %bootstrap-glibc
   ;; The initial libc.
@@ -268,20 +278,25 @@ $out/bin/guile --version~%"
     (inputs
      `(("tar" ,(search-bootstrap-binary "tar" (%current-system)))
        ("xz"  ,(search-bootstrap-binary "xz" (%current-system)))
-       ("tarball" ,(bootstrap-origin
-                    (origin
-                     (method url-fetch)
-                     (uri (map (cut string-append <> "/" (%current-system)
-                                    "/20130105/glibc-2.17.tar.xz")
-                               %bootstrap-base-urls))
-                     (sha256
-                      (match (%current-system)
-                        ("x86_64-linux"
-                         (base32
-                          "18kv1z9d8dr1j3hm9w7663kchqw9p6rsx11n1m143jgba2jz6jy3"))
-                        ("i686-linux"
-                         (base32
-                          "08hv8i0axwnihrcgbz19x0a7s6zyv3yx38x8r29liwl8h82x9g88")))))))))
+       ("tarball"
+        ,(bootstrap-origin
+          (origin
+           (method url-fetch)
+           (uri (map (cut string-append <> "/" (%current-system)
+                          "/20130105/glibc-2.17.tar.xz")
+                     %bootstrap-base-urls))
+           (sha256
+            (match
+             (%current-system)
+             ("x86_64-linux"
+              (base32
+               "18kv1z9d8dr1j3hm9w7663kchqw9p6rsx11n1m143jgba2jz6jy3"))
+             ("i686-linux"
+              (base32
+               "08hv8i0axwnihrcgbz19x0a7s6zyv3yx38x8r29liwl8h82x9g88"))
+             ("mips64el-linux"
+              (base32
+               "0fyvdrnym09r3sqygw0g3l3rc6r2g10xwvswsmrr1y10xzbblixf")))))))))
     (synopsis "Bootstrap binaries and headers of the GNU C Library")
     (description #f)
     (home-page #f)))
@@ -335,20 +350,25 @@ exec ~a/bin/.gcc-wrapped -B~a/lib \
        ("xz"  ,(search-bootstrap-binary "xz" (%current-system)))
        ("bash" ,(search-bootstrap-binary "bash" (%current-system)))
        ("libc" ,%bootstrap-glibc)
-       ("tarball" ,(bootstrap-origin
-                    (origin
-                     (method url-fetch)
-                     (uri (map (cut string-append <> "/" (%current-system)
-                                    "/20130105/gcc-4.7.2.tar.xz")
-                               %bootstrap-base-urls))
-                     (sha256
-                      (match (%current-system)
-                        ("x86_64-linux"
-                         (base32
-                          "1x1p7han5crnbw906iwdifykr6grzm0w27dy9gz75j0q1b32i4px"))
-                        ("i686-linux"
-                         (base32
-                          "06wqs0xxnpw3hn0xjb4c9cs0899p1xwkcysa2rvzhvpra0c5vsg2")))))))))
+       ("tarball"
+        ,(bootstrap-origin
+          (origin
+           (method url-fetch)
+           (uri (map (cut string-append <> "/" (%current-system)
+                          "/20130105/gcc-4.7.2.tar.xz")
+                     %bootstrap-base-urls))
+           (sha256
+            (match
+             (%current-system)
+             ("x86_64-linux"
+              (base32
+               "1x1p7han5crnbw906iwdifykr6grzm0w27dy9gz75j0q1b32i4px"))
+             ("i686-linux"
+              (base32
+               "06wqs0xxnpw3hn0xjb4c9cs0899p1xwkcysa2rvzhvpra0c5vsg2"))
+             ("mips64el-linux"
+              (base32
+               "02xqndxvipw1ii5bqxakmvksw1kj5cpj8kzwpmc5zxg9dzrm91zw")))))))))
     (synopsis "Bootstrap binaries of the GNU Compiler Collection")
     (description #f)
     (home-page #f)))

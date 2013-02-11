@@ -1,6 +1,7 @@
 # GNU Guix --- Functional package management for GNU
 # Copyright © 2012, 2013 Ludovic Courtès <ludo@gnu.org>
 # Copyright © 2013 Andreas Enge <andreas@enge.fr>
+# Copyright © 2013 Nikita Karetnikov <nikita@karetnikov.org>
 #
 # This file is part of GNU Guix.
 #
@@ -198,6 +199,7 @@ dist_patch_DATA =						\
 bootstrapdir = $(guilemoduledir)/gnu/packages/bootstrap
 bootstrap_x86_64_linuxdir = $(bootstrapdir)/x86_64-linux
 bootstrap_i686_linuxdir = $(bootstrapdir)/i686-linux
+bootstrap_mips64el_linuxdir = $(bootstrapdir)/mips64el-linux
 
 dist_bootstrap_x86_64_linux_DATA =		\
   gnu/packages/bootstrap/x86_64-linux/bash	\
@@ -208,8 +210,14 @@ dist_bootstrap_x86_64_linux_DATA =		\
 dist_bootstrap_i686_linux_DATA =		\
   gnu/packages/bootstrap/i686-linux/bash	\
   gnu/packages/bootstrap/i686-linux/mkdir	\
-  gnu/packages/bootstrap/i686-linux/tar	\
+  gnu/packages/bootstrap/i686-linux/tar		\
   gnu/packages/bootstrap/i686-linux/xz
+
+dist_bootstrap_mips64el_linux_DATA =		\
+  gnu/packages/bootstrap/mips64el-linux/bash	\
+  gnu/packages/bootstrap/mips64el-linux/mkdir	\
+  gnu/packages/bootstrap/mips64el-linux/tar	\
+  gnu/packages/bootstrap/mips64el-linux/xz
 
 # Big bootstrap binaries are not included in the tarball.  Instead, they
 # are downloaded.
@@ -217,6 +225,8 @@ nodist_bootstrap_x86_64_linux_DATA =					\
   gnu/packages/bootstrap/x86_64-linux/guile-2.0.7.tar.xz
 nodist_bootstrap_i686_linux_DATA =					\
   gnu/packages/bootstrap/i686-linux/guile-2.0.7.tar.xz
+nodist_bootstrap_mips64el_linux_DATA =					\
+  gnu/packages/bootstrap/mips64el-linux/guile-2.0.7.tar.xz
 
 # Those files must remain executable, so they remain executable once
 # imported into the store.
@@ -225,7 +235,8 @@ install-data-hook:
 
 DISTCLEANFILES =				\
   $(nodist_bootstrap_x86_64_linux_DATA)		\
-  $(nodist_bootstrap_i686_linux_DATA)
+  $(nodist_bootstrap_i686_linux_DATA)		\
+  $(nodist_bootstrap_mips64el_linux_DATA)
 
 # Method to download a file from an external source.
 DOWNLOAD_FILE =								\
@@ -239,6 +250,9 @@ gnu/packages/bootstrap/x86_64-linux/guile-2.0.7.tar.xz:
 gnu/packages/bootstrap/i686-linux/guile-2.0.7.tar.xz:
 	$(MKDIR_P) `dirname "$@"`
 	$(DOWNLOAD_FILE) "$@" "f9a7c6f4c556eaafa2a69bcf07d4ffbb6682ea831d4c9da9ba095aca3ccd217c"
+gnu/packages/bootstrap/mips64el-linux/guile-2.0.7.tar.xz:
+	$(MKDIR_P) `dirname "$@"`
+	$(DOWNLOAD_FILE) "$@" "35c8d1c1c518bc1c77f3bc260f09712cae22053b7ba160030c9d93ad8ea12f7b"
 
 nobase_nodist_guilemodule_DATA = $(GOBJECTS) guix/config.scm
 
