@@ -217,7 +217,7 @@ $out/bin/guile --version~%"
                 "0nzj1lmm9b94g7k737cr4w1dv282w5nmhb53238ikax9r6pkc0yb"))
               ("mips64el-linux"
                (base32
-                "0qfcz9ah4d7pwx273mznhkbcwqi393vcy1qvv80slv4m01barimb"))))))
+                "140f1r4drd0ap9b3lsy9plwyk5j1w9ld24bhxjxsj5d06lnbwm2d"))))))
    "true"                    ; the program to test
    "Bootstrap binaries of Coreutils, Awk, etc."))
 
@@ -240,7 +240,7 @@ $out/bin/guile --version~%"
                 "1rafk6aq4sayvv3r3d2khn93nkyzf002xzh0xadlyci4mznr6b0a"))
               ("mips64el-linux"
                (base32
-                "0216pszdfz6ark6zhaldmh7z2gzjyjbbycdb0km25aqrvgz63lia"))))))
+                "0p9j6f902qzdbzziccgs184qr6pn81bxiw6s3dmahdyp1kdwjr84"))))))
    "ld"                      ; the program to test
    "Bootstrap binaries of the GNU Binutils"))
 
@@ -296,7 +296,7 @@ $out/bin/guile --version~%"
                "08hv8i0axwnihrcgbz19x0a7s6zyv3yx38x8r29liwl8h82x9g88"))
              ("mips64el-linux"
               (base32
-               "0fyvdrnym09r3sqygw0g3l3rc6r2g10xwvswsmrr1y10xzbblixf")))))))))
+               "1vls6idlvim4c5qxi529mjivfwmxxw2l9l722kqcgvk4spypkp49")))))))))
     (synopsis "Bootstrap binaries and headers of the GNU C Library")
     (description #f)
     (home-page #f)))
@@ -368,7 +368,7 @@ exec ~a/bin/.gcc-wrapped -B~a/lib \
                "06wqs0xxnpw3hn0xjb4c9cs0899p1xwkcysa2rvzhvpra0c5vsg2"))
              ("mips64el-linux"
               (base32
-               "02xqndxvipw1ii5bqxakmvksw1kj5cpj8kzwpmc5zxg9dzrm91zw")))))))))
+               "1dry5x9gbjyaxxaj0468lq0z63yjkf4nwindi9xka4kknwglhayn")))))))))
     (synopsis "Bootstrap binaries of the GNU Compiler Collection")
     (description #f)
     (home-page #f)))
