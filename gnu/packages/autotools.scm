@@ -195,7 +195,10 @@ Standards.  Automake requires the use of Autoconf.")
                "out"))                       ; libltdl.so, ltdl.h, etc.
 
     (arguments
-     `(#:patches (list (assoc-ref %build-inputs "patch/skip-tests"))
+     `(;; XXX: 'demo-nopic-make.test' fails on mips64el:
+       ;; <https://lists.gnu.org/archive/html/bug-libtool/2013-02/msg00000.html>.
+       #:tests? ,(not (string=? (%current-system) "mips64el-linux"))
+       #:patches (list (assoc-ref %build-inputs "patch/skip-tests"))
        #:phases (alist-cons-before
                  'check 'pre-check
                  (lambda* (#:key inputs #:allow-other-keys)
